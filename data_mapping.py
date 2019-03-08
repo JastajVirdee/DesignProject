@@ -13,13 +13,22 @@ EAR_CENTER  = {'x': 12.2, 'y': 14.4, 'z': 12.3}
 def get_signals():
     '''
     Read signal levels from .log file.
-    Returns: signal_levels (list[time slice][signals (dictionary{str:float}])
+    Returns: signals (list[time slice][signals (dictionary{str:float}])
     '''
+    signals = []
+    f = open('microchip.log', 'r')
+    for line in f:
+        if (line.startswith('3D DATA', 6, 13)):
+            line_words = line.split()
+            line_signals = {'South':line_words[8], 'West':line_words[9], 'North':line_words[10], 'East':line_words[11],'Center':line_words[12]}
+            signals.append(line_signals)
+    return signals
+            
 
-def get_distances(signal_levels):
+def get_distances(signals):
     '''
     Convert signal levels to distances
-    Parameter 1: signal levels (list[time slice][signals (dictionary{str:float})])
+    Parameter 1: signals (list[time slice][signals (dictionary{str:float})])
     Returns: nose_distances, ear_distances (dictionary{str:float})
     '''
 
@@ -30,3 +39,5 @@ def get_position(nose_distances, ear_distances):
     Returns: nose_position, ear_position (dictionary{str:float})
     '''
 
+signals = get_signals()
+print(signals)
