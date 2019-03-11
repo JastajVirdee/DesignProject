@@ -10,27 +10,39 @@ EAR_SOUTH   = {'x': 12.2, 'y': 14.4, 'z': 15.6}
 EAR_WEST    = {'x': 12.2, 'y': 19.4, 'z': 12.3}
 EAR_CENTER  = {'x': 12.2, 'y': 14.4, 'z': 12.3}
 
-def get_signals():
+def get_signals(type):
     '''
     Read signal levels from .log file.
+    Parameter 1: signal type (nose or ear)
     Returns: signals (list[time slice][signals (dictionary{str:float}])
     '''
     signals = []
-    f = open('microchip.log', 'r')
+    f = open('../' + type + '.log', 'r')
     for line in f:
         if (line.startswith('3D DATA', 6, 13)):
             line_words = line.split()
-            line_signals = {'South':line_words[8], 'West':line_words[9], 'North':line_words[10], 'East':line_words[11],'Center':line_words[12]}
+            line_signals = {'North':line_words[10], 'East':line_words[11], 'South':line_words[8], 'West':line_words[9], 'Center':line_words[12]}
             signals.append(line_signals)
     return signals
             
 
-def get_distances(signals):
+def get_distances(signals, type):
     '''
     Convert signal levels to distances
     Parameter 1: signals (list[time slice][signals (dictionary{str:float})])
-    Returns: nose_distances, ear_distances (dictionary{str:float})
+    Parameter 2: signal type (nose or ear)
+    Returns: nose_distances, ear_distances (list[time slice][dictionary{str:float}])
     '''
+    distances = []
+    if type == 'nose':
+        for i in range(0, len(signals)):
+            north_distance = 1202 + 1.56*float(signals[i]['North']) + 5.07*10**(-4)*float(signals[i]['North'])**2
+            east_distance = -8.22 + 0.155*float(signals[i]['East']) - 3.57*10**(-4)*float(signals[i]['East'])**2
+            south_distance = -314 - 0.739*float(signals[i]['South']) - 4.27*10**(-4)*float(signals[i]['South'])**2
+            west_distance = 3540 + 5.33*float(signals[i]['West']) + 2.0*10**(-3)*float(signals[i]['West'])**2
+            center_distance = -620 + 1.33*float(signals[i]['Center']) - 7.07*10**(-4)*float(signals[i]['Center'])**2
+            distances.append({'North':north_distance, 'East':east_distance, 'South':south_distance, 'West':west_distance, 'Center':center_distance})
+    return distances
 
 def get_position(nose_distances, ear_distances):
     '''
@@ -39,5 +51,10 @@ def get_position(nose_distances, ear_distances):
     Returns: nose_position, ear_position (dictionary{str:float})
     '''
 
-signals = get_signals()
-print(signals)
+# Get signals
+nose_signals = get_signals('nose')
+#ear_signals = get_signals('ear')
+
+# Convert signals to distances
+nose_distances = get_distances(nose_signals, 'nose')
+#ear_distances = get_distances(ear_signals, 'ear')
