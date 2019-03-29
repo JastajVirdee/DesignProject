@@ -42,6 +42,14 @@ def get_distances(signals, type):
             west_distance = 697 + 1.08*float(signals[i]['West']) + 4.20*10**(-4)*float(signals[i]['West'])**2
             center_distance = 182 - 0.362*float(signals[i]['Center']) + 1.82*10**(-4)*float(signals[i]['Center'])**2
             distances.append({'North':north_distance, 'East':east_distance, 'South':south_distance, 'West':west_distance, 'Center':center_distance})
+    elif type == 'ear':
+        for i in range(0, len(signals)):
+            north_distance = 3.35 + 1.25*10**(-3)*float(signals[i]['North']) - 2.23*10**(-7)*float(signals[i]['North'])**2
+            east_distance = -242 + 0.106*float(signals[i]['East']) - 1.13*10**(-5)*float(signals[i]['East'])**2
+            south_distance = 3.67 - 2.78*10**(-3)*float(signals[i]['South']) + 1.54*10**(-6)*float(signals[i]['South'])**2
+            west_distance = 122 - 0.0864*float(signals[i]['West']) + 1.58*10**(-5)*float(signals[i]['West'])**2
+            center_distance = 6.16 - 2.72*10**(-3)*float(signals[i]['Center']) + 4.71*10**(-7)*float(signals[i]['Center'])**2
+            distances.append({'North':north_distance, 'East':east_distance, 'South':south_distance, 'West':west_distance, 'Center':center_distance})
     return distances
 
 def get_position(nose_distances, ear_distances):
